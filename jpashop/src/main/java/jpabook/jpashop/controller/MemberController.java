@@ -11,6 +11,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 public class MemberController {
@@ -22,6 +24,7 @@ public class MemberController {
     }
     @PostMapping(value = "/members/new")
     public String create(@Valid MemberForm form, BindingResult result) {
+        //오류가 담긴 채로 실행
         if (result.hasErrors()) {
             return "members/createMemberForm";
         }
@@ -32,6 +35,16 @@ public class MemberController {
         member.setAddress(address);
         memberService.join(member);
         return "redirect:/";
+    }
+
+    @GetMapping("/members")
+    public String list(Model model){
+        List<Member> members = memberService.findMembers();
+        model.addAttribute("members", members);
+        for(Member member : members) {
+            System.out.println("회원 목록" + member.getName());
+        }
+        return "members/memberList";
     }
 }
 
